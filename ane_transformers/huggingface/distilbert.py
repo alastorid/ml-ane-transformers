@@ -520,6 +520,21 @@ class DistilBertForMultipleChoice(
         return ((loss, ) + output) if loss is not None else output
 
 
+_LINEAR_TO_CONV2D_LAYERS = [
+    "q_lin.weight",
+    "k_lin.weight",
+    "v_lin.weight",
+    "out_lin.weight",
+    "lin1.weight",
+    "lin2.weight",
+    "classifier.weight",
+    "pre_classifier.weight",
+    "vocab_transform.weight",
+    "vocab_projector.weight",
+    "qa_outputs.weight",
+]
+
+
 def linear_to_conv2d_map(state_dict, prefix, local_metadata, strict,
                          missing_keys, unexpected_keys, error_msgs):
     """ Unsqueeze twice to map nn.Linear weights to nn.Conv2d weights
@@ -529,5 +544,6 @@ def linear_to_conv2d_map(state_dict, prefix, local_metadata, strict,
         is_output_proj = all(substr in k
                              for substr in ['classifier', '.weight'])
         if is_internal_proj or is_output_proj:
-            if len(state_dict[k].shape) == 2:
-                state_dict[k] = state_dict[k][:, :, None, None]
+            if any(k.endswith(layer) for layer in _LINEAR_TO_CONV2D_LAYERS):
+                if len(state_dict[k].shape) == 2:
+                    state_dict[k] = state_dict[k][:, :, None, None]
