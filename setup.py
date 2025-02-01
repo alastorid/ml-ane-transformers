@@ -17,7 +17,8 @@ setup(
         "torch>=2.0.0",
         "coremltools>=5.2.0",
         "transformers>=4.18.0",
-        "protobuf>=3.1.0,<=3.20.1",
+        "protobuf>=3.1.0",
+
     ],
     packages=find_packages(),
     classifiers=[
