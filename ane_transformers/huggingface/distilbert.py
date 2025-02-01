@@ -256,6 +256,9 @@ class DistilBertForMaskedLM(modeling_distilbert.DistilBertForMaskedLM):
         setattr(self, 'vocab_projector',
                 nn.Conv2d(config.dim, config.vocab_size, 1))
 
+        # Register hook for unsqueezing nn.Linear parameters to match nn.Conv2d parameter spec
+        self._register_load_state_dict_pre_hook(linear_to_conv2d_map)
+
     def forward(
         self,
         input_ids=None,
@@ -310,6 +313,8 @@ class DistilBertForSequenceClassification(
         setattr(self, 'pre_classifier', nn.Conv2d(config.dim, config.dim, 1))
         setattr(self, 'classifier', nn.Conv2d(config.dim, config.num_labels,
                                               1))
+        # Register hook for unsqueezing nn.Linear parameters to match nn.Conv2d parameter spec
+        self._register_load_state_dict_pre_hook(linear_to_conv2d_map)
 
     def forward(
         self,
@@ -359,6 +364,8 @@ class DistilBertForQuestionAnswering(
         setattr(self, 'distilbert', DistilBertModel(config))
         setattr(self, 'qa_outputs', nn.Conv2d(config.dim, config.num_labels,
                                               1))
+        # Register hook for unsqueezing nn.Linear parameters to match nn.Conv2d parameter spec
+        self._register_load_state_dict_pre_hook(linear_to_conv2d_map)
 
     def forward(
         self,
@@ -414,6 +421,9 @@ class DistilBertForTokenClassification(
         setattr(self, 'distilbert', DistilBertModel(config))
         setattr(self, 'classifier',
                 nn.Conv2d(config.hidden_size, config.num_labels, 1))
+
+        # Register hook for unsqueezing nn.Linear parameters to match nn.Conv2d parameter spec
+        self._register_load_state_dict_pre_hook(linear_to_conv2d_map)
 
     def forward(
         self,
