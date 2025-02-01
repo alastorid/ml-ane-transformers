@@ -3,6 +3,7 @@
 # Copyright (C) 2022 Apple Inc. All Rights Reserved.
 #
 
+import einops
 from ane_transformers import testing_utils
 import collections
 import coremltools as ct
